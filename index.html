@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Ably Dussehra Scratch Coupon — Premium (Optimized)</title>
+  <style>
+    :root{
+      --gold:#ffd700;
+      --gold-soft:#ffea8a;
+      --bg1:#000000;
+      --bg2:#111111;
+      --bg3:#1a1a1a;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      min-height:100vh;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      color:#fff;
+      font-family:Arial, Helvetica, sans-serif;
+      overflow:hidden;
+      text-align:center;
+      background: radial-gradient(1200px 600px at 50% 20%, #1a1a1a 0%, #000 60%);
+    }
+    .logo{font-size:38px;font-weight:900;color:var(--gold);margin-bottom:6px}
+    .tagline{font-size:16px;color:var(--gold-soft);margin-bottom:16px}
+    .form-box, .coupon{
+      width: 340px;
+      background: linear-gradient(180deg, #111, #0c0c0c);
+      padding: 20px;
+      border-radius: 18px;
+      box-shadow: 0 8px 30px rgba(255, 215, 0, 0.18);
+      text-align:center;
+      position:relative;
+      overflow:hidden;
+    }
+    .form-box h2{ margin-bottom: 14px; color: var(--gold); }
+    .form-box input{
+      width: 92%;
+      padding: 12px;
+      margin: 8px 0;
+      border-radius: 10px;
+      border: none;
+      outline: none;
+      font-size: 16px;
+      text-align: center;
+      background:#fff;
+      color:#000;
+    }
+    .form-box button{
+      margin-top: 10px;
+      padding: 12px 20px;
+      font-size: 16px;
+      background: var(--gold);
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: 800;
+      box-shadow: 0 6px 18px rgba(255,215,0,0.25);
+    }
+    .coupon{ display:none; height: 240px; }
+    #scratchCanvas{position:absolute; inset:0; width:100%; height:100%;}
+    .reward{
+      width:100%; height:100%;
+      background:#111;
+      color:var(--gold);
+      font-size:20px; font-weight:bold;
+      display:flex; align-items:center; justify-content:center;
+      flex-direction:column; gap:4px;
+      padding:10px;
+      position:relative;
+    }
+    .reward span{ font-size:26px; color:var(--gold-soft); }
+    .expiry{ font-size:12px; color:#bbb; margin-top:8px; }
+  </style>
+</head>
+<body>
+  <div class="logo">ABLY</div>
+  <div class="tagline">🎉 Ably Wishes You a Happy Dussehra! 🎉</div>
+
+  <div class="form-box" id="formBox">
+    <h2>Enter Your Details</h2>
+    <input type="text" id="fullName" placeholder="Full Name" required />
+    <input type="tel" id="mobile" placeholder="Mobile Number" required />
+    <button onclick="startCoupon()">Continue</button>
+  </div>
+
+  <div class="coupon" id="couponBox">
+    <div class="reward" id="rewardText">
+      🎉 Congratulations <br />
+      <span id="custName"></span><br />
+      You got ₹<span id="amount"></span>
+      <div class="expiry" id="expiryDate"></div>
+    </div>
+    <canvas id="scratchCanvas"></canvas>
+  </div>
+
+  <!-- Confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <script>
+    function getWeightedAmount(){
+      const r = Math.random();
+      return r < 0.8 ? Math.floor(Math.random() * 76) + 50 : Math.floor(Math.random() * 51) + 150;
+    }
+
+    function startCoupon(){
+      const name = document.getElementById("fullName").value.trim();
+      const mobile = document.getElementById("mobile").value.trim();
+
+      if(!/^[A-Za-z ]{3,}$/.test(name)){ alert("Enter valid name."); return; }
+      if(!/^[6-9][0-9]{9}$/.test(mobile)){ alert("Enter valid mobile."); return; }
+
+      document.getElementById("formBox").style.display = "none";
+      document.getElementById("couponBox").style.display = "block";
+
+      document.getElementById("custName").innerText = name;
+      document.getElementById("amount").innerText = getWeightedAmount();
+
+      const today = new Date();
+      today.setDate(today.getDate() + 1); // next-day validity
+      document.getElementById("expiryDate").innerText = "Valid till: " + today.toLocaleDateString();
+
+      initScratch();
+    }
+
+    function initScratch(){
+      const canvas = document.getElementById("scratchCanvas");
+      const ctx = canvas.getContext("2d");
+      let isDrawing = false;
+      let firedCelebration = false;
+
+      function resizeCanvas(){
+        canvas.width = canvas.offsetWidth / 1.5;
+        canvas.height = canvas.offsetHeight / 1.5;
+        ctx.globalCompositeOperation = "source-over";
+        ctx.fillStyle = "#999";
+        ctx.fillRect(0,0,canvas.width,canvas.height);
+        ctx.fillStyle = "#222";
+        ctx.font = "16px Arial";
+        ctx.textAlign = "center";
+        ctx.fillText("Scratch Here", canvas.width/2, canvas.height/2);
+      }
+      resizeCanvas();
+      window.addEventListener("resize", resizeCanvas);
+
+      function start(e){ isDrawing = true; draw(e); }
+      function stop(){ isDrawing = false; ctx.beginPath(); }
+
+      function draw(e){
+        if(!isDrawing) return;
+        e.preventDefault();
+        const rect = canvas.getBoundingClientRect();
+        const x = ((e.touches ? e.touches[0].clientX : e.clientX) - rect.left) * (canvas.width / rect.width);
+        const y = ((e.touches ? e.touches[0].clientY : e.clientY) - rect.top) * (canvas.height / rect.height);
+
+        requestAnimationFrame(() => {
+          ctx.globalCompositeOperation = "destination-out";
+          ctx.beginPath();
+          ctx.arc(x, y, 20, 0, Math.PI*2); // smaller brush
+          ctx.fill();
+
+          if(!firedCelebration){
+            const cleared = ctx.getImageData(0,0,canvas.width,canvas.height).data
+              .filter((_,i)=>i%4===3).reduce((a,b)=>a+(b===0),0);
+            const total = canvas.width*canvas.height;
+            if(cleared/total > 0.2){ // 20% scratch
+              firedCelebration = true;
+              celebrate();
+            }
+          }
+        });
+      }
+
+      canvas.addEventListener("mousedown", start);
+      canvas.addEventListener("mouseup", stop);
+      canvas.addEventListener("mousemove", draw);
+      canvas.addEventListener("touchstart", start, {passive:false});
+      canvas.addEventListener("touchend", stop, {passive:false});
+      canvas.addEventListener("touchmove", draw, {passive:false});
+    }
+
+    function celebrate(){
+      confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+      setTimeout(()=> confetti({ particleCount: 80, spread: 60, origin:{y:0.5} }), 400);
+    }
+  </script>
+</body>
+</html>
